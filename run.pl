@@ -26,6 +26,7 @@ sub getObject($) {
 sub processDockerRun($) {
 	my $command = shift;
 	$command =~ s/-(ti|it)/-d/g;
+	$command =~ s/^docker/$binary/g;
 	return $command;
 }
 
@@ -45,6 +46,7 @@ sub getExitCode($) {
 sub runImage($) {
 	my $image = shift;
 	my $id = "";
+	my $link_id = "";
 	my $code = 0;
 	require $image;
 	my $obj = getObject($image);
@@ -52,16 +54,16 @@ sub runImage($) {
 	my $link = $obj->link();
 	if (defined $link && length($link) != 0) {
 		$link = processDockerRun($link);
-		$id = `$link`;
+		$link_id = `$link`;
 		$code = $?;
-		chomp($id);
-		if ($code == 0 && $id =~ /[0-9a-z]+/) {
-			$code = getExitCode($id);
+		chomp($link_id);
+		if ($code == 0 && $link_id =~ /[0-9a-z]+/) {
+			$code = getExitCode($link_id);
 			if ($code != 0 ) {
-				return ($id, $code);
+				return ($link_id, $id, $code);
 			}
 		} else {
-			return ($id, $code);
+			return ($link_id, $id, $code);
 		}
 	}
 	my $cmd = $obj->run();
@@ -73,13 +75,13 @@ sub runImage($) {
 		if ($code == 0 && $id =~ /[0-9a-z]+/) {
 			$code = getExitCode($id);
 			if ($code != 0 ) {
-				return ($id, $code);
+				return ($link_id, $id, $code);
 			}
 		} else {
-			return ($id, $code);
+			return ($link_id, $id, $code);
 		}
 	}
-	return ($id, $code);
+	return ($link_id, $id, $code);
 }
 
 sub removeContainer($) {
@@ -92,17 +94,30 @@ sub removeImage($) {
 	`$binary rmi $image`;
 }
 
+my $type = $ARGV[0];
+if (not defined $type || ($type ne "docker" && $type ne "hyper")) {
+	$type = "docker";
+}
+if ($type eq "hyper") {
+	$binary = "hyper";
+	if (defined $ENV{hyper_host}) {
+		$binary = $binary." -H ".$ENV{hyper_host};
+	}
+}
 my @files = getImages();
 open RESULT, ">/tmp/test-result.txt" or die $!;
 foreach (@files) {
 	my $file = $_;
-	my ($id, $code) = runImage($file);
+	my ($lid, $id, $code) = runImage($file);
 	if ($code != 0) {
 		print "Error existed(".$code.") to run docker image ".$_."\n";
 	}
 	print "\n";
 	if ($id =~ /[0-9a-z]+/) {
 		removeContainer($id);
+	}
+	if ($lid =~ /[0-9a-z]+/) {
+		removeContainer($lid);
 	}
 	require $_;
 	my $obj = getObject($file);
