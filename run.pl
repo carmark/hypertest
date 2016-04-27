@@ -100,7 +100,15 @@ sub removeImage($) {
 	`$binary rmi $image`;
 }
 
-my $type = $ARGV[0];
+my $type = "";
+my $file = "";
+if ( @ARGV > 1 ) {
+	$type = $ARGV[0];
+	$file = $ARGV[1];
+} else {
+	$file = $ARGV[0];
+}
+
 if (not defined $type || (defined $type && $type ne "docker" && $type ne "hyper")) {
 	$type = "docker";
 }
@@ -110,8 +118,14 @@ if ($type eq "hyper") {
 		$binary = $binary." -H ".$ENV{hyper_host};
 	}
 }
+
+if (not defined $file) {
+	print "please specific the output file\n";
+	exit(1);
+}
+open RESULT, ">$file" or die "open file failed: ".$!;
+
 my @files = getImages();
-open RESULT, ">/tmp/test-result.txt" or die $!;
 foreach (@files) {
 	my $file = $_;
 	my ($lid, $id, $code) = runImage($file);
