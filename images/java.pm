@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run  -v /usr/src/myapp -w /usr/src/myapp java java -?";
+	return "docker run  -v /usr/src/myapp -w /usr/src/myapp -d java java -?";
 }
 
 1;
