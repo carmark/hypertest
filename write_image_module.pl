@@ -81,7 +81,7 @@ sub getImageRunInfo($$) {
 			$res =~ s/-(ti|it)/-d/;
 			$res =~ s/--rm//;
 			$res =~ s/(?:--volume|-v)\s+[^:]+\:([^:]+)(?:\:[a-z]+)?/-v $1/g;
-			$res =~ s/\s+-P\s+/\s\s/g;
+			$res =~ s/\s+-P\s+/  /g;
 			$res =~ s/-p [0-9]+\:[0-9]+//g;
 			push @results, $res;
 		}
@@ -110,6 +110,8 @@ sub writeImageModule($$$) {
 	$runCmd = $runs[0] if (@runs > 0 && $runs[0] =~ /$name_regex/);
 	(my $n = $name) =~ s/-/_/g;
 	my $file = "images/".$n.".pm";
+	# will not re-write the exist file
+	next if (-e $file);
 	my $obj = getObject($file);
 	(my $dir = $file) =~ s/(.*)\/[^\/]+\.pm$/$1/;
 	print "file is $file, dir is $dir\n";
@@ -144,16 +146,29 @@ __EOF__
 	close OUT;
 }
 
-my $all = $ARGV[0];
-if (not defined $all || $all < 10) {
-	$all = 10;
+if (@ARGV != 2) {
+	print "please specific the start and stop number\n";
+	exit(1);
 }
-my $page = $all/10;
-for (my $i = 1; $i <= $page; $i ++) {
+my $start = $ARGV[0];
+if ($start < 1) {
+	print "start number can not be smaller than 1\n";
+	exit(1);
+}
+my $stop = $ARGV[1];
+if ($start > $stop) {
+	print "start number can not be bigger than stop number\n";
+	exit(1);
+}
+my $page = int($stop/10)+1;
+for (my $i = int($start/10)+1; $i <= $page; $i ++) {
+	print "process page# ".$i."\n";
 	my @res = getImageRank($i);
 	for(my $j = 0; $j < @res; $j ++) {
 		my $r = $res[$j];
 		my $num =($i-1)*10+$j+1 ;
+		next if ($num < $start);
+		last if ($num > $stop);
 		print "process ".$r->{name},", link is ".$r->{link}."\n";
 		writeImageModule($r->{name}, $r->{link}, $num);
 	}

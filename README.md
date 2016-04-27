@@ -1,5 +1,23 @@
 # hypertest
 
-run the script to get the top 5000 pulls docker images.
+### Run the test script
+#### Hyper
 
-The simple result, you may find it via this [link](https://gist.github.com/carmark/89f9de6356f39149317968ccafe226a6).
+```
+perl run.pl hyper result.txt
+```
+You may set the environment of `hyper_host` if you want to test other hyper server.
+
+#### Docker
+
+```
+perl run.pl docker result.txt
+```
+
+### Get more image's info
+
+```
+perl write_image_module.pl start_rank stop_rank
+```
+
+> Notice: if the module is exist, it will not rewrite it.
