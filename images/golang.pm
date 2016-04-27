@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run  -v /usr/src/myapp -w /usr/src/myapp golang:1.6 go build -v";
+	return "docker run  -v /usr/src/myapp -w /usr/src/myapp -d golang:1.6 go -v";
 }
 
 1;

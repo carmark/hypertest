@@ -100,6 +100,10 @@ sub removeImage($) {
 	`$binary rmi $image`;
 }
 
+sub cleanup() {
+	system("docker rmi $(docker images -q)");
+}
+
 my $type = "";
 my $file = "";
 if ( @ARGV > 1 ) {
@@ -147,3 +151,5 @@ foreach (@files) {
 	print RESULT $obj->rank()."\t".$obj->name()."\t".$id."\t".$code."\t".$obj->run()."\n";
 }
 close RESULT;
+
+cleanup();
