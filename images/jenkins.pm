@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run jenkins --version";
+	return "docker run -d jenkins";
 }
 
 1;
