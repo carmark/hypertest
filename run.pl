@@ -33,6 +33,12 @@ sub processDockerRun($) {
 sub getExitCode($) {
 	my $id = shift;
 	my $code = 0;
+	print "sleep 10s to get exit code\n";
+	for (my $i =0; $i <10; $i ++) {
+		sleep(1);
+		print ". ";
+		$| = 1;
+	}
 	my @output = `$binary inspect $id`;
 	foreach my $line (@output) {
 		if ($line =~ /\"ExitCode\"\: ([0-9]+)/) {
@@ -95,7 +101,7 @@ sub removeImage($) {
 }
 
 my $type = $ARGV[0];
-if (not defined $type || ($type ne "docker" && $type ne "hyper")) {
+if (not defined $type || (defined $type && $type ne "docker" && $type ne "hyper")) {
 	$type = "docker";
 }
 if ($type eq "hyper") {
