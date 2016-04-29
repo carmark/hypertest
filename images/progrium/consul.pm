@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run -h node1 progrium/consul -server -bootstrap";
+	return "docker run -h node1 -d progrium/consul -server -bootstrap";
 }
 
 1;

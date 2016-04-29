@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag";
+	return "docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb";
 }
 
 1;

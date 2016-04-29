@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run  -v /usr/src/app -w /usr/src/app ruby ruby -v";
+	return "docker run  -v /usr/src/app -w /usr/src/app -d ruby ruby -v";
 }
 
 1;

@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "";
+	return "docker run -d kylemanna/openvpn";
 }
 
 1;

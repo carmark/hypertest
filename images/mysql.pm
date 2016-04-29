@@ -16,7 +16,7 @@ sub link() {
 }
 
 sub run() {
-	return "docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag";
+	return "docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql";
 }
 
 1;
